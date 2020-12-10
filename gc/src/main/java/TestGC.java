@@ -5,7 +5,9 @@ public class TestGC {
 
 
     public static void main(String[] args) {
-        testAllocation();
+        //testAllocation();
+
+        testAllocation2();
     }
 
     /**
@@ -23,7 +25,7 @@ public class TestGC {
 
 
     /**
-     * jvm 参数：-verbose:gc  -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:PretenureSizeThreshold
+     * jvm 参数：-verbose:gc  -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:PretenureSizeThreshold=3145728
      */
     public static void testAllocation2() {
         byte a4[];
