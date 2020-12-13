@@ -27,7 +27,7 @@ public class TestGC {
     /**
      * jvm 参数：-verbose:gc  -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:PretenureSizeThreshold=3145728
      */
-    public static void testAllocation2() {
+    public strictfp static void testAllocation2() {
         byte a4[];
         a4 = new byte[4 * _1MB];
     }
