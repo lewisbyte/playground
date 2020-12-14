@@ -154,7 +154,7 @@ Heap
  Metaspace       used 57880K, capacity 62258K, committed 62592K, reserved 1103872K
   class space    used 6387K, capacity 7172K, committed 7296K, reserved 1048576K
 ```
-- 从GC 日志可以看到 metaspace 的容量太小，导致几次`full gc` ，这里我们调整永久代 metaspace 的大小，老年代的使用率同样也不高，所以添加 `JVM` 参数：` -XX:MetaspaceSize=256m`，再来一次：
+- 从GC 日志可以看到 `metaspace` 的容量太小，导致几次`full gc` ，这里我们调整永久代 `metaspace` 的大小，老年代的使用率同样也不高，所以添加 `JVM` 参数：` -XX:MetaspaceSize=256m`，再来一次：
 
 - 本次`JVM`传入的参数：`export MAVEN_OPTS="-XX:+UseParallelGC -XX:+UseParallelOldGC -Xloggc:./gc.log -Xmn1024m -XX:+PrintHeapAtGC -XX:MetaspaceSize=256m -Xms2048m -Xmx2048m -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:+PrintGCDetails" `
 
