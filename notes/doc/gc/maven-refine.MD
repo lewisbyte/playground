@@ -77,7 +77,7 @@ Heap
 ```
 
 ### 第二次内存分析
-- 遗憾的发现，我们的时间不仅没有减少，反而还增加了。观察gc日志，我发现虽然没有了堆的扩容，但是却产生了很多的`minor gc`，还有少许metaspace的`full gc`，这里我就怀疑是不是年轻代的大小太大，导致的GC。于是我尝试将 `-Xmn1024m` 参数删除，进行第三次测试，将jvm参数调整为：
+- 遗憾的发现，我们的时间不仅没有减少，反而还增加了。观察gc日志，我发现虽然没有了堆的扩容，但是却产生了很多的`minor gc`，还有少许metaspace的`full gc`，这里我就怀疑是不是年轻代的大小太大，导致的GC。于是我尝试将 `-Xmn1024m` 参数删除，进行第三次测试，将`JVM`参数调整为：
 
 - 本次`JVM`传入的参数：：` export MAVEN_OPTS="-XX:+PrintHeapAtGC -Xms2048m -Xmx2048m -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:+PrintGCDetails" `
 
@@ -111,7 +111,7 @@ Heap
 ```
 
 ### 第三次日志分析
-- 尝试移除掉了负优化之后（捂脸，大约 快了`3s`左右的时间。这里可以看到年轻代的大小有所调整，速度有所提升，大概在500MB。为了仔细的观察gc 的情况，不至于看着混乱，于是我将gc 的日志输入到一个文件中` -Xloggc:./gc.log `,下面贴出完整的gc 日志打印：
+- 尝试移除掉了负优化之后（捂脸，大约 快了`3s`左右的时间。这里可以看到年轻代的大小有所调整，大概在500MB，而且整个编译速度有所提升。为了仔细的观察gc 的情况，不至于看着混乱，于是我将gc 的日志输入到一个文件中` -Xloggc:./gc.log `,下面贴出完整的gc 日志打印：
 
 ```
 Java HotSpot(TM) 64-Bit Server VM (25.271-b09) for bsd-amd64 JRE (1.8.0_271-b09), built on Sep 16 2020 16:54:38 by "java_re" with gcc 4.2.1 Compatible Apple LLVM 10.0.0 (clang-1000.11.45.5)
