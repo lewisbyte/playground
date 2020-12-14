@@ -54,7 +54,7 @@ Heap
 ```
 ### 第一次内存分析
 
-- 可以看到这里的默认堆大小是：76288K, 年轻代的大小为：74m ，老年代 171m。可以看到在mvn编译启动的时候便立即发生了一次minor gc（[PSYoungGen: 65536K->9718K(76288K)]），是初始化的堆太小了，将项目完整编译一遍，试试看堆会扩容到多大，执行 ` mvn clean install `。编译的结果如下：编译的耗时为38s，堆的大小从开始的` 76288K ` 扩容到 ` 1287168K `，所以第一个优化点就是将默认堆的大小调大，减少扩容堆带来的时间损耗，调大年轻代的大小为`1GB`。
+- 可以看到这里的默认堆大小是：76288K, 年轻代的大小为：74m ，老年代 171m。可以看到在mvn编译启动的时候便立即发生了一次`minor gc`（[PSYoungGen: 65536K->9718K(76288K)]），是初始化的堆太小了，将项目完整编译一遍，试试看堆会扩容到多大，执行 ` mvn clean install `。编译的结果如下：编译的耗时为38s，堆的大小从开始的` 76288K ` 扩容到 ` 1287168K `，所以第一个优化点就是将默认堆的大小调大，减少扩容堆带来的时间损耗，调大年轻代的大小为`1GB`。
 - 最终的 `JVM` 参数调整为：
 
 - 本次`JVM`传入的参数：` export MAVEN_OPTS="-XX:+PrintHeapAtGC -Xmn1024m  -Xms2048m -Xmx2048m -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:+PrintGCDetails" `
@@ -77,7 +77,7 @@ Heap
 ```
 
 ### 第二次内存分析
-- 遗憾的发现，我们的时间不仅没有减少，反而还增加了。观察gc日志，我发现虽然没有了堆的扩容，但是却产生了很多的minor gc，还有少许metaspace的full gc，这里我就怀疑是不是年轻代的大小太大，导致的GC。于是我尝试将 `-Xmn1024m` 参数删除，进行第三次测试，将jvm参数调整为：
+- 遗憾的发现，我们的时间不仅没有减少，反而还增加了。观察gc日志，我发现虽然没有了堆的扩容，但是却产生了很多的`minor gc`，还有少许metaspace的`full gc`，这里我就怀疑是不是年轻代的大小太大，导致的GC。于是我尝试将 `-Xmn1024m` 参数删除，进行第三次测试，将jvm参数调整为：
 
 - 本次`JVM`传入的参数：：` export MAVEN_OPTS="-XX:+PrintHeapAtGC -Xms2048m -Xmx2048m -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:+PrintGCDetails" `
 
@@ -154,7 +154,7 @@ Heap
  Metaspace       used 57880K, capacity 62258K, committed 62592K, reserved 1103872K
   class space    used 6387K, capacity 7172K, committed 7296K, reserved 1048576K
 ```
-- 从GC 日志可以看到 metaspace 的容量太小，导致几次full gc ，这里我们调整永久代 metaspace 的大小，老年代的使用率同样也不高，所以添加 `JVM` 参数：` -XX:MetaspaceSize=256m`，再来一次：
+- 从GC 日志可以看到 metaspace 的容量太小，导致几次`full gc` ，这里我们调整永久代 metaspace 的大小，老年代的使用率同样也不高，所以添加 `JVM` 参数：` -XX:MetaspaceSize=256m`，再来一次：
 
 - 本次`JVM`传入的参数：`export MAVEN_OPTS="-XX:+UseParallelGC -XX:+UseParallelOldGC -Xloggc:./gc.log -Xmn1024m -XX:+PrintHeapAtGC -XX:MetaspaceSize=256m -Xms2048m -Xmx2048m -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:+PrintGCDetails" `
 
@@ -168,7 +168,7 @@ Heap
 [INFO] ------------------------------------------------------------------------
 ```
 ### 第四次分析
-- 这次调整之后，虽然没有产生一次full gc ，但是却产生了很多次的minor gc，时间没有降低，可以确定了是由于年轻代的空间设置的比较大，对象的来回复制同样也是非常耗时的。于是确定的将 `-Xmn1024m`移除，使用默认的比例。考虑 `JVM` 有自适应大小内存策略，每次 GC 后会重新计算 Eden、From 和 To 区的大小。于是加上了 `-XX:-UseAdaptiveSizePolicy`做一次尝试，继续重跑。
+- 这次调整之后，虽然没有产生一次`full gc` ，但是却产生了很多次的`minor gc`，时间没有降低，可以确定了是由于年轻代的空间设置的比较大，对象的来回复制同样也是非常耗时的。于是确定的将 `-Xmn1024m`移除，使用默认的比例。考虑 `JVM` 有自适应大小内存策略，每次 GC 后会重新计算 Eden、From 和 To 区的大小。于是加上了 `-XX:-UseAdaptiveSizePolicy`做一次尝试，继续重跑。
 
 - 本次`JVM`传入的参数：`export MAVEN_OPTS="-XX:+UseParallelGC -XX:+UseParallelOldGC -Xloggc:./gc.log -XX:+PrintHeapAtGC -XX:MetaspaceSize=256m -XX:-UseAdaptiveSizePolicy -Xms2048m -Xmx2048m -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:+PrintGCDetails" `
 
@@ -182,7 +182,7 @@ Heap
 [INFO] ------------------------------------------------------------------------
 ```
 ### 第五次分析：
-- 一共产生了20次的minor GC，0次full gc。这次终于跑进了 34 秒大关。成功玄学的优化了1秒钟
+- 一共产生了20次的`minor gc`，0次`full gc`。这次终于跑进了 34 秒大关。成功玄学的优化了1秒钟
 
 
 ## G1
