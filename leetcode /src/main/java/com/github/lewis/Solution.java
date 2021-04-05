@@ -1,9 +1,9 @@
 package com.github.lewis;
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
@@ -37,19 +37,23 @@ import java.util.Stack;
  */
 class Solution {
     public static void main(String[] args) {
-        int a[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-        System.out.println(new Solution().maxSubArray(a));
+//        int a[] = {9,1,7,9,7,9,7};
+        int a[] = {3, 4, 3, 3};
+        System.out.println(new Solution().singleNumber(a));
     }
 
 
-    public int maxSubArray(int[] nums) {
-
-        int max = nums[0];
-        for (int i = 0; i < nums.length; i++) {
-
-        }
-
-        return max;
+    public int[] singleNumbers(int[] nums) {
+        return IntStream.of(nums)
+                .boxed()
+                .collect(Collectors.groupingBy(s -> s))
+                .entrySet()
+                .stream()
+                .filter(it -> it.getValue().size() == 1)
+                .map(it -> it.getKey())
+                .collect(Collectors.toList())
+                .stream()
+                .mapToInt(i -> i).toArray();
     }
 
 
