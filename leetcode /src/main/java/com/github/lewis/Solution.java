@@ -37,11 +37,33 @@ import java.util.stream.IntStream;
  */
 class Solution {
     public static void main(String[] args) {
-//        int a[] = {9,1,7,9,7,9,7};
-        int a[] = {3, 4, 3, 3};
-        System.out.println(new Solution().singleNumber(a));
+        int a[] = {3,2,3,1,2,4,5,5,6};
+        System.out.println(new Solution().findKthLargest(a,4));
+        int b[] = {3,2,1,5,6,4};
+        System.out.println(new Solution().findKthLargest(b,2));
     }
 
+
+    /**
+     * top k 问题
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int findKthLargest(int[] nums, int k) {
+        Queue<Integer> queue = new PriorityQueue<>();
+        for (int i: nums){
+            if (queue.size()<k){
+                queue.add(i);
+            }else {
+                if (queue.peek()<i){
+                    queue.remove();
+                    queue.add(i);
+                }
+            }
+        }
+        return queue.peek();
+    }
 
     public int[] singleNumbers(int[] nums) {
         return IntStream.of(nums)
