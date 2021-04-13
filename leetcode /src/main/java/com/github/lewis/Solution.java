@@ -37,26 +37,39 @@ import java.util.stream.IntStream;
  */
 class Solution {
     public static void main(String[] args) {
-        int a[] = {3,2,3,1,2,4,5,5,6};
-        System.out.println(new Solution().findKthLargest(a,4));
-        int b[] = {3,2,1,5,6,4};
-        System.out.println(new Solution().findKthLargest(b,2));
+        int a[] = {2, 3, 1, 1, 4};
+        System.out.println(new Solution().canJump(a));
+        int b[] = {1,0,1};
+        System.out.println(new Solution().canJump(b));
     }
 
 
+    public boolean canJump(int[] nums) {
+        int cnt = 0, index = 0;
+        for (int i : nums) {
+            cnt = Math.max(cnt - 1, i);
+            if (cnt <= 0 && index < nums.length - 1) {
+                return false;
+            }
+            index++;
+        }
+        return true;
+    }
+
     /**
      * top k 问题
+     *
      * @param nums
      * @param k
      * @return
      */
     public int findKthLargest(int[] nums, int k) {
         Queue<Integer> queue = new PriorityQueue<>();
-        for (int i: nums){
-            if (queue.size()<k){
+        for (int i : nums) {
+            if (queue.size() < k) {
                 queue.add(i);
-            }else {
-                if (queue.peek()<i){
+            } else {
+                if (queue.peek() < i) {
                     queue.remove();
                     queue.add(i);
                 }
