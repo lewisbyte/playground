@@ -1,5 +1,3 @@
-package com.github.lewis;
-
 /**
  * @program: Main
  * @description: acm 模板
