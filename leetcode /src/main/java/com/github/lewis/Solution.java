@@ -37,12 +37,74 @@ import java.util.stream.IntStream;
  */
 class Solution {
     public static void main(String[] args) {
-        int a[] = {2, 3, 1, 1, 4};
-        System.out.println(new Solution().canJump(a));
-        int b[] = {1,0,1};
-        System.out.println(new Solution().canJump(b));
+        int a[] = {3, 39, 34, 5, 9};
+        System.out.println(new Solution().largestNumber(a));
+        int b[] = {34323,3432};
+        System.out.println(new Solution().largestNumber(b));
+
+        System.out.println(new Solution().compareALessThanB("34323", "3432"));
+
+
     }
 
+
+    /**
+     * 3,30,34,5,9
+     * <p>
+     * 9533430
+     * <p>
+     * 3,39,34,5,9
+     * <p>
+     * 9539343
+     * <p>
+     * 9539343
+     * <p>
+     * 9 39
+     * <p>
+     *
+     * @param nums
+     * @return
+     */
+    public String largestNumber(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                String a = String.valueOf(nums[i]);
+                String b = String.valueOf(nums[j]);
+                boolean ret = compareALessThanB(a, b);
+                if (ret) {
+                    int tmp = nums[i];
+                    nums[i] = nums[j];
+                    nums[j] = tmp;
+                    System.out.printf("less %s %s\n", a, b);
+
+                } else {
+                    System.out.printf("big %s %s\n", a, b);
+                }
+            }
+        }
+        String s = "";
+        for (int i : nums) {
+            s += i;
+        }
+        return s;
+    }
+
+
+    private boolean compareALessThanB(String a, String b) {
+        //比较长度共同的前缀大小
+        int index = 0;
+        for (; index < a.length() && index < b.length(); index++) {
+            if (a.toCharArray()[index] < b.toCharArray()[index]) {
+                return true;
+            }
+        }
+        if (a.length() > b.length()) {
+            return a.toCharArray()[index] < b.toCharArray()[index - 1];
+        } else if (a.length() < b.length()) {
+            return a.toCharArray()[index - 1] < b.toCharArray()[index];
+        }
+        return a.compareTo(b) < 0;
+    }
 
     public boolean canJump(int[] nums) {
         int cnt = 0, index = 0;
