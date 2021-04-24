@@ -37,16 +37,55 @@ import java.util.stream.IntStream;
  */
 class Solution {
     public static void main(String[] args) {
-        int a[] = {3, 39, 34, 5, 9};
-        System.out.println(new Solution().largestNumber(a));
-        int b[] = {34323,3432};
-        System.out.println(new Solution().largestNumber(b));
-
-        System.out.println(new Solution().compareALessThanB("34323", "3432"));
-
-
+        System.out.println(new Solution().getLeastNumbers(new int[]{3, 2, 1}, 2));
     }
 
+
+    public char firstUniqChar(String s) {
+        int cnt[] = new int[1 << 8];
+        for (char c : s.toCharArray()) {
+            cnt[c]++;
+        }
+        for (char c : s.toCharArray()) {
+            if (cnt[c]==1){
+                return c;
+            }
+        }
+        return ' ';
+    }
+
+    public int[] getLeastNumbers(int[] arr, int k) {
+
+        Queue<Integer> queue = new PriorityQueue<>((a, b) -> b.compareTo(a));
+
+        for (int i : arr) {
+            if (queue.size() < k) {
+                queue.add(i);
+            } else {
+                Integer head = queue.peek();
+                if (head != null && head > i) {
+                    queue.poll();
+                    queue.add(i);
+                }
+            }
+        }
+        int ret[] = new int[queue.size()];
+        int index = 0;
+        for (int i : queue) {
+            ret[index++] = i;
+        }
+        return ret;
+    }
+
+
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Collections.sort(wordDict);
+
+        for (String i : wordDict) {
+            s = s.replace(i, "");
+        }
+        return s.length() == 0;
+    }
 
     /**
      * 3,30,34,5,9
