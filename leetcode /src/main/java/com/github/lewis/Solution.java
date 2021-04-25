@@ -37,9 +37,9 @@ import java.util.stream.IntStream;
  */
 class Solution {
     public static void main(String[] args) {
-        System.out.println(new Solution().getLeastNumbers(new int[]{3, 2, 1}, 2));
-    }
 
+
+    }
 
     public char firstUniqChar(String s) {
         int cnt[] = new int[1 << 8];
