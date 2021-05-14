@@ -37,9 +37,109 @@ import java.util.stream.IntStream;
  */
 class Solution {
     public static void main(String[] args) {
+        ListNode n1 = new ListNode(1);
+        ListNode n2 = new ListNode(2);
+        ListNode n3 = new ListNode(3);
+        ListNode n4 = new ListNode(4);
+        ListNode n5 = new ListNode(5);
+        ListNode n6 = new ListNode(6);
 
+        n1.next=n2;
+        n2.next=n3;
+        n3.next=n4;
+        n4.next=n5;
+        n5.next=n6;
 
+        new Solution().reverseList(n1);
     }
+    public ListNode reverseList(ListNode head) {
+
+        ListNode pre = null,next = null;
+        while(head!=null){
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+
+    public static class ListNode {
+      int val;
+      ListNode next;
+      ListNode() {}
+      ListNode(int val) { this.val = val; }
+      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+  }
+
+    public int[][] merge(int[][] intervals) {
+        List<Segment> segments = new ArrayList<>();
+        for (int[] sg : intervals) {
+            segments.add(new Segment(sg[0], sg[1]));
+        }
+
+        List<Segment> ret = new ArrayList<>();
+        Collections.sort(segments);
+        int current;
+
+        for (int i = 0; i < segments.size(); ) {
+            Segment sg = segments.get(i);
+            Segment ele = new Segment(sg.getX(), sg.getY());
+            current = sg.getX();
+            while (current >= sg.x) {
+                current = Math.max(sg.y,current);
+                if (++i >= segments.size()) {
+                    break;
+                }
+                sg = segments.get(i);
+            }
+            ele.setY(current);
+            ret.add(ele);
+
+        }
+        int[][] merges = new int[ret.size()][2];
+        for (int i = 0; i < ret.size(); i++) {
+            merges[i][0] = ret.get(i).getX();
+            merges[i][1] = ret.get(i).getY();
+        }
+        return merges;
+    }
+
+
+    static class Segment implements Comparable<Segment> {
+        private int x;
+        private int y;
+
+        public Segment(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        @Override
+        public int compareTo(Segment o) {
+            if (this.x != o.x) {
+                return this.x - o.x;
+            }
+            return this.y - o.y;
+        }
+    }
+
 
     public char firstUniqChar(String s) {
         int cnt[] = new int[1 << 8];
@@ -47,7 +147,7 @@ class Solution {
             cnt[c]++;
         }
         for (char c : s.toCharArray()) {
-            if (cnt[c]==1){
+            if (cnt[c] == 1) {
                 return c;
             }
         }
